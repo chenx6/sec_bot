@@ -47,7 +47,7 @@ def send_daily_push():
     """
     发送每日推送
     """
-    logger.info('Sending daily push')
+    logger.warning('Sending daily push')
     push_items: List[str] = [
         call_async_func(get_xuanwu_push()),
         call_async_func(get_360_boardcast())
@@ -61,7 +61,7 @@ def send_weekly_push():
     """
     发送每周推送
     """
-    logger.info('Sending weekly push')
+    logger.warning('Sending weekly push')
     competitions = call_async_func(ctfhub_get_upcoming_event())
     for gid in subscribe_groups:
         bot.sync.send_group_msg(group_id=gid, message=competitions)
