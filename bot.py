@@ -74,5 +74,5 @@ def reset_counter():
 every().day.at('18:00').do(send_daily_push)
 every().friday.at('21:00').do(send_weekly_push)
 every().minutes.do(reset_counter)
-run_continuously(1800)
+run_continuously(60)
 bot.run(host='127.0.0.1', port=8080)
