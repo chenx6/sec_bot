@@ -47,6 +47,15 @@ async def reply_at(event: Event):
             break
 
 
+def send_group_boardcast_message(messages: List[str]):
+    """
+    广播消息到订阅群组
+    """
+    for m in messages:
+        for gid in subscribe_groups:
+            bot.sync.send_group_msg(group_id=gid, message=m)
+
+
 def send_daily_push():
     """
     发送每日推送
@@ -56,9 +65,7 @@ def send_daily_push():
         call_async_func(get_xuanwu_push()),
         call_async_func(get_360_boardcast())
     ]
-    for gid in subscribe_groups:
-        for p in push_items:
-            bot.sync.send_group_msg(group_id=gid, message=p)
+    send_group_boardcast_message(push_items)
 
 
 def send_weekly_push():
@@ -66,9 +73,8 @@ def send_weekly_push():
     发送每周推送
     """
     logger.warning('Sending weekly push')
-    competitions = call_async_func(ctfhub_get_upcoming_event())
-    for gid in subscribe_groups:
-        bot.sync.send_group_msg(group_id=gid, message=competitions)
+    push_items = [call_async_func(ctfhub_get_upcoming_event())]
+    send_group_boardcast_message(push_items)
 
 
 def reset_counter():
