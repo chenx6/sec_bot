@@ -52,6 +52,8 @@ def send_group_boardcast_message(messages: List[str]):
     广播消息到订阅群组
     """
     for m in messages:
+        if len(m) < 3:
+            continue
         for gid in subscribe_groups:
             bot.sync.send_group_msg(group_id=gid, message=m)
 
