@@ -18,4 +18,5 @@ class Rss(BaseBot):
         return 'RSS' in message
 
     async def reply(self, event: Event) -> str:
-        return await get_360_boardcast(False)
+        text = await get_360_boardcast(False)
+        return text if len(text) > 2 else '今天没有推送呢(ノへ￣、)'
