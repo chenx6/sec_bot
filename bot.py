@@ -37,9 +37,13 @@ async def reply_at(event: Event):
         return
     for plugin in plugins:
         if plugin.match(event, event.message):
-            reply_text = await plugin.reply(event)
-            await bot.send(event, reply_text)
-            counter.add_counter()
+            try:
+                reply_text = await plugin.reply(event)
+                await bot.send(event, reply_text)
+                counter.add_counter()
+            except Exception as e:
+                logger.error('Plugin error')
+                logger.error(e)
             break
 
 
