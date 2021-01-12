@@ -16,7 +16,7 @@ class Admin(BaseBot):
         pass
 
     def match(self, event: Event, message: str) -> bool:
-        return self.has_at_bot(message) and event.sender['user_id'] == admin_uid
+        return self.is_admin(event, message)
 
     async def reply(self, event: Event) -> str:
         if '测试' in event.message:

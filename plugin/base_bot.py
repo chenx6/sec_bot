@@ -1,5 +1,5 @@
 from aiocqhttp import Event
-from config import uid
+from config import uid, admin_uid
 
 
 class BaseBot:
@@ -25,6 +25,10 @@ class BaseBot:
         重新设置机器人状态
         """
         pass
+
+    def is_admin(self, event: Event, message: str) -> bool:
+        return self.has_at_bot(message) \
+            and event.sender['user_id'] == admin_uid
 
     def match(self, event: Event, message: str) -> bool:
         """
