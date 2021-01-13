@@ -21,7 +21,7 @@ class AnquankeVuln(BaseBot):
         self.cve_number = ''
 
     def match(self, event: Event, message: str) -> bool:
-        if not self.has_at_bot(message):
+        if not self.has_at_bot(event, message):
             return False
         if self.vuln_regex.search(message):
             self.cve_number = self.vuln_regex.findall(message)[0]

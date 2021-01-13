@@ -5,13 +5,15 @@ from schedule import every
 
 from config import subscribe_groups
 from tools import run_continuously, call_async_func, LimitCounter
-from plugin import (base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
+from plugin import (silent, base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
                     whoami, rss, admin, unknown_message)
 from spider.rsshub_weibo import get_xuanwu_push
 from spider.ctfhub import ctfhub_get_upcoming_event
 from spider.rss import get_360_boardcast
 
+silent_ = silent.Silent()
 plugins: List[base_bot.BaseBot] = [
+    silent_,
     anquanke_vuln.AnquankeVuln(),
     ctfhub.CTFHub(),
     daily_push.DailyPush(),
@@ -21,7 +23,6 @@ plugins: List[base_bot.BaseBot] = [
     admin.Admin(),
     unknown_message.Unknown()
 ]
-send_silent = False  # 机器人禁言
 bot = CQHttp()
 logger = bot.logger
 counter = LimitCounter()
@@ -32,6 +33,8 @@ async def reply_at(event: Event):
     """
     反馈 at 消息
     """
+    if silent_.is_silent(event, event.message):
+        return
     if not counter.can_send():
         await bot.send(event, f'发送的太快了吧，{event.sender["nickname"]}，让我缓缓(＞﹏＜)')
         return

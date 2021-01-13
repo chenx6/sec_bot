@@ -12,7 +12,7 @@ class Unknown(BaseBot):
         pass
 
     def match(self, event: Event, message: str) -> bool:
-        return self.has_at_bot(message)
+        return self.has_at_bot(event, message)
 
     async def reply(self, event: Event) -> str:
         return '我听不大懂你在说什么(＞﹏＜)'
