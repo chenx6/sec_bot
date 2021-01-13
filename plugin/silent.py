@@ -8,18 +8,29 @@ class Silent(BaseBot):
     """
     def __init__(self):
         super().__init__()
-        self.is_silent = False
+        self.is_silent_ = False
+
+    def is_silent(self, event: Event, message: str):
+        silent = False
+        if self.is_silent_:
+            silent = True
+        if self.match(event, message):
+            silent = False
+        return silent
 
     def match(self, event: Event, message: str) -> bool:
+        can_process = False
         if self.is_admin(event, message) and self.has_at_bot(event, message):
             if '休息' in event.message:
-                self.is_silent = True
+                can_process = True
             elif '干活' in event.message:
-                self.is_silent = False
-        return self.is_silent
+                can_process = True
+        return can_process
 
-    def reply(self, event: Event) -> str:
+    async def reply(self, event: Event) -> str:
         if '休息' in event.message:
+            self.is_silent_ = True
             return '我休息一会儿(￣o￣) . z Z'
         elif '干活' in event.message:
+            self.is_silent_ = False
             return '(～o￣▽￣)～o ~。。。 '
