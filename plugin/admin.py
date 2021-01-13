@@ -23,9 +23,5 @@ class Admin(BaseBot):
             return '我还活着ヽ(✿ﾟ▽ﾟ)ノ'
         elif '清除' in event.message:
             return '清除缓存成功ヽ(✿ﾟ▽ﾟ)ノ'
-        elif '休息' in event.message:
-            return '我休息一会儿(￣o￣) . z Z'
-        elif '干活' in event.message:
-            return '(～o￣▽￣)～o ~。。。 '
         else:
             return '......'

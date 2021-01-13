@@ -1,3 +1,4 @@
+from plugin.silent import Silent
 from typing import List
 
 from aiocqhttp import CQHttp, Event
@@ -21,10 +22,10 @@ plugins: List[base_bot.BaseBot] = [
     admin.Admin(),
     unknown_message.Unknown()
 ]
-send_silent = False  # 机器人禁言
 bot = CQHttp()
 logger = bot.logger
 counter = LimitCounter()
+silent = Silent()
 
 
 @bot.on_message('group')
@@ -34,6 +35,9 @@ async def reply_at(event: Event):
     """
     if not counter.can_send():
         await bot.send(event, f'发送的太快了吧，{event.sender["nickname"]}，让我缓缓(＞﹏＜)')
+        return
+    if silent.match(event, event.message):
+        await bot.send(event, silent.reply())
         return
     for plugin in plugins:
         if plugin.match(event, event.message):
