@@ -13,7 +13,7 @@ class Rss(BaseBot):
         pass
 
     def match(self, event: Event, message: str) -> bool:
-        if not self.has_at_bot(message):
+        if not self.has_at_bot(event, message):
             return False
         return 'RSS' in message
 

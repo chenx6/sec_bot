@@ -17,7 +17,7 @@ class DailyPush(BaseBot):
         self.curr_day = True
 
     def match(self, event: Event, message: str) -> bool:
-        if not self.has_at_bot(message):
+        if not self.has_at_bot(event, message):
             return False
         if '每日资讯' in message:
             return True

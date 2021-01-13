@@ -11,7 +11,7 @@ class Silent(BaseBot):
         self.is_silent = False
 
     def match(self, event: Event, message: str) -> bool:
-        if self.is_admin(event, message) and self.has_at_bot(message):
+        if self.is_admin(event, message) and self.has_at_bot(event, message):
             if '休息' in event.message:
                 self.is_silent = True
             elif '干活' in event.message:

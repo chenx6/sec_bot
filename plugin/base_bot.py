@@ -1,18 +1,22 @@
-from aiocqhttp import Event
-from config import uid, admin_uid
+from aiocqhttp import Event, Message
+from aiocqhttp.message import MessageSegment
+from config import admin_uid
 
 
 class BaseBot:
     """
     基础款机器人
     """
-    at_msg = f'[CQ:at,qq={uid}]'  # at 消息的酷 Q 码
-
-    def has_at_bot(self, message: str):
+    def has_at_bot(self, event: Event, message: str):
         """
         是否有人 at 机器人
         """
-        return self.at_msg in message
+        has_at = False
+        msg = Message(message)
+        for seg in msg:
+            if seg == MessageSegment.at(event.self_id):
+                has_at = True
+        return has_at
 
     def __init__(self):
         """
@@ -27,7 +31,7 @@ class BaseBot:
         pass
 
     def is_admin(self, event: Event, message: str) -> bool:
-        return self.has_at_bot(message) \
+        return self.has_at_bot(event, message) \
             and event.sender['user_id'] == admin_uid
 
     def match(self, event: Event, message: str) -> bool:

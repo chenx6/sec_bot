@@ -21,7 +21,7 @@ class CTFHub(BaseBot):
         self.limit = 5
 
     def match(self, event: Event, message: str) -> bool:
-        if not self.has_at_bot(message):
+        if not self.has_at_bot(event, message):
             return False
         if '最近的比赛' in message:
             return True
