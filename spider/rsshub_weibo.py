@@ -1,5 +1,6 @@
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
+from .rss import get_items
 from re import compile
 from datetime import datetime
 
@@ -28,10 +29,7 @@ async def parse_weibo_rss(session: ClientSession,
     """
     提取微博内容
     """
-    rsshub_response = await session.get(RSSHUB_URL + WEIBO_PATH.format(uid))
-    rsshub_xml = await rsshub_response.text()
-    soup = BeautifulSoup(rsshub_xml, 'lxml-xml')
-    items = soup.find_all('item')
+    items = await get_items(session, RSSHUB_URL + WEIBO_PATH.format(uid))
     link = ''
     for item in items:
         # 获取日期最近的推送
