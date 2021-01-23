@@ -65,21 +65,29 @@ def send_daily_push():
     """
     发送每日推送
     """
-    logger.warning('Sending daily push')
-    push_items: List[str] = [
-        call_async_func(get_xuanwu_push()),
-        call_async_func(get_360_boardcast())
-    ]
-    send_group_boardcast_message(push_items)
+    logger.info('Sending daily push')
+    try:
+        push_items: List[str] = [
+            call_async_func(get_xuanwu_push()),
+            call_async_func(get_360_boardcast())
+        ]
+        send_group_boardcast_message(push_items)
+    except Exception as e:
+        logger.error('Sending daily push error')
+        logger.error(e)
 
 
 def send_weekly_push():
     """
     发送每周推送
     """
-    logger.warning('Sending weekly push')
-    push_items = [call_async_func(ctfhub_get_upcoming_event())]
-    send_group_boardcast_message(push_items)
+    logger.info('Sending weekly push')
+    try:
+        push_items = [call_async_func(ctfhub_get_upcoming_event())]
+        send_group_boardcast_message(push_items)
+    except Exception as e:
+        logger.error('Sending weekly push error')
+        logger.error(e)
 
 
 def reset_counter():
