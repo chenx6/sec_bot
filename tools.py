@@ -4,6 +4,11 @@ from schedule import run_pending
 from asyncio import new_event_loop, set_event_loop, get_event_loop
 
 
+HEADER = {
+    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0",
+}
+
+
 class LimitCounter:
     """
     发送消息频率限制器

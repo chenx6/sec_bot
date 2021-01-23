@@ -6,7 +6,7 @@ from schedule import every
 from config import subscribe_groups
 from tools import run_continuously, call_async_func, LimitCounter
 from plugin import (silent, base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
-                    whoami, rss, admin, unknown_message)
+                    whoami, rss, search, admin, unknown_message)
 from spider.rsshub_weibo import get_xuanwu_push
 from spider.ctfhub import ctfhub_get_upcoming_event
 from spider.rss import get_360_boardcast
@@ -20,6 +20,7 @@ plugins: List[base_bot.BaseBot] = [
     rss.Rss(),
     help_menu.HelpMenu(),
     whoami.WhoAmI(),
+    search.SearchBot(),
     admin.Admin(),
     unknown_message.Unknown()
 ]
