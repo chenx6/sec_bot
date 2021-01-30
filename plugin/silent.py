@@ -1,3 +1,5 @@
+from typing import Optional
+
 from aiocqhttp.event import Event
 from .base_bot import BaseBot
 
@@ -10,7 +12,9 @@ class Silent(BaseBot):
         super().__init__()
         self.is_silent_ = False
 
-    def is_silent(self, event: Event, message: str):
+    def is_silent(self, event: Optional[Event] = None, message: Optional[str] = None):
+        if not event or not message:
+            return self.is_silent_
         silent = False
         if self.is_silent_:
             silent = True
