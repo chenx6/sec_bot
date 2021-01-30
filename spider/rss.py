@@ -1,12 +1,14 @@
 from typing import Callable, List
 from time import strptime, localtime
-from unittest.case import TestCase
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 
 async def get_items(session: ClientSession, rss_addr: str) -> List[str]:
+    """
+    解析 RSS ，获取 item 节点
+    """
     response = await session.get(rss_addr)
     text = await response.text()
     soup = BeautifulSoup(text, features="lxml-xml")
@@ -14,6 +16,9 @@ async def get_items(session: ClientSession, rss_addr: str) -> List[str]:
 
 
 def get_push_item(items: list, curr_day: bool) -> List[str]:
+    """
+    解析 item 节点，获取可以推送的节点
+    """
     curr_time = localtime()
     ret_item = []
     for item in items:
@@ -33,6 +38,9 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
 async def get_rss_push(rss_addr: str,
                        filter_funcs: List[Callable[[str], bool]] = None,
                        curr_day: bool = True) -> str:
+    """
+    获取 RSS 推送
+    """
     async with ClientSession() as session:
         items = await get_items(session, rss_addr)
         ret_item = get_push_item(items, curr_day)
@@ -43,6 +51,9 @@ async def get_rss_push(rss_addr: str,
 
 
 async def get_360_boardcast(curr_day: bool = True) -> str:
+    """
+    获取 360 的通告
+    """
     def filter_boardcast(text: str) -> bool:
         return '通告' in text
 

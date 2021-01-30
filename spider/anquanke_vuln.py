@@ -4,6 +4,9 @@ ANQUANKE_DOMAIN = 'https://api.anquanke.com'
 
 
 async def search_anquanke_vuln(text: str, exp=False) -> str:
+    """
+    通过安全客的接口，实现 CVE 编号搜索
+    """
     async with ClientSession() as session:
         params = {
             's': text,
