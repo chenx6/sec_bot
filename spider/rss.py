@@ -1,11 +1,11 @@
-from typing import Callable, List
+from typing import Any, Callable, List, Sequence, Optional
 from time import strptime, localtime
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 
-async def get_items(session: ClientSession, rss_addr: str) -> List[str]:
+async def get_items(session: ClientSession, rss_addr: str) -> List[Any]:
     """
     解析 RSS ，获取 item 节点
     """
@@ -36,7 +36,7 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
 
 
 async def get_rss_push(rss_addr: str,
-                       filter_funcs: List[Callable[[str], bool]] = None,
+                       filter_funcs: Optional[Sequence[Callable[[str], bool]]] = None,
                        curr_day: bool = True) -> str:
     """
     获取 RSS 推送
@@ -44,10 +44,11 @@ async def get_rss_push(rss_addr: str,
     async with ClientSession() as session:
         items = await get_items(session, rss_addr)
         ret_item = get_push_item(items, curr_day)
+        filtered_item = iter(ret_item)
         if filter_funcs:
             for func in filter_funcs:
-                ret_item = filter(func, ret_item)
-        return '\n'.join(ret_item).strip()
+                filtered_item = filter(func, filtered_item)
+        return '\n'.join(filtered_item).strip()
 
 
 async def get_360_boardcast(curr_day: bool = True) -> str:
