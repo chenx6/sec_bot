@@ -55,6 +55,9 @@ def send_group_boardcast_message(messages: List[str]):
     """
     广播消息到订阅群组
     """
+    if silent_.is_silent():
+        return
+    logger.info('Sending group boardcast')
     for m in messages:
         if len(m) < 3:
             continue
@@ -66,7 +69,6 @@ def send_daily_push():
     """
     发送每日推送
     """
-    logger.info('Sending daily push')
     try:
         push_items: List[str] = [
             call_async_func(get_xuanwu_push()),
@@ -82,7 +84,6 @@ def send_weekly_push():
     """
     发送每周推送
     """
-    logger.info('Sending weekly push')
     try:
         push_items = [call_async_func(ctfhub_get_upcoming_event())]
         send_group_boardcast_message(push_items)
