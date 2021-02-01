@@ -1,4 +1,6 @@
 from threading import Thread, Event
+from typing import Callable, List
+from dataclasses import dataclass
 from time import sleep
 from schedule import run_pending
 from asyncio import new_event_loop, set_event_loop, get_event_loop
@@ -7,6 +9,34 @@ from asyncio import new_event_loop, set_event_loop, get_event_loop
 HEADER = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0",
 }
+
+
+@dataclass
+class Subscription:
+    """
+    推送类，记录推送内容，时间，群组
+    """
+
+    get_message_func: Callable[[], str]  # 获取推送内容的函数
+    subscribe_groups: List[int]  # 获取订阅此条推送消息的群组
+    send_frequency: str  # 获取发送的频率
+    send_time: str  # 获取发送的时间
+
+    def set_bot(self, bot):
+        """
+        设置发送的 bot 类
+
+        TODO: 优化掉这个函数
+        """
+        self.bot = bot
+
+    def send_message(self):
+        """
+        推送消息
+        """
+        message = self.get_message_func()
+        for gid in self.subscribe_groups:
+            self.bot.sync.send_group_msg(group_id=gid, message=message)
 
 
 class LimitCounter:
