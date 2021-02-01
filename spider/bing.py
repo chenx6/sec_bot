@@ -44,7 +44,7 @@ async def bing(keyword: str, result_count=3) -> str:
             if idx == result_count:
                 break
             headlines = node.select("li > h2")
-            intros = node.select("li > div > p")
+            intros = node.select("li > div > p") or node.select('.b_snippet > p')
             if len(headlines) and len(intros):
                 headline = headlines[0].text
                 link = headlines[0].a["href"]
