@@ -3,13 +3,10 @@ from typing import List
 from aiocqhttp import CQHttp, Event
 from schedule import every
 
-from config import subscribe_groups
-from tools import run_continuously, call_async_func, LimitCounter
+from config import subscribes
+from tools import run_continuously, LimitCounter
 from plugin import (silent, base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
                     whoami, rss, search, admin, unknown_message)
-from spider.rsshub_weibo import get_xuanwu_push
-from spider.ctfhub import ctfhub_get_upcoming_event
-from spider.rss import get_360_boardcast
 
 silent_ = silent.Silent()
 plugins: List[base_bot.BaseBot] = [
@@ -51,53 +48,13 @@ async def reply_at(event: Event):
             break
 
 
-def send_group_boardcast_message(messages: List[str]):
-    """
-    广播消息到订阅群组
-    """
-    if silent_.is_silent():
-        return
-    logger.info('Sending group boardcast')
-    for m in messages:
-        if len(m) < 3:
-            continue
-        for gid in subscribe_groups:
-            bot.sync.send_group_msg(group_id=gid, message=m)
-
-
-def send_daily_push():
-    """
-    发送每日推送
-    """
-    try:
-        push_items: List[str] = [
-            call_async_func(get_xuanwu_push()),
-            call_async_func(get_360_boardcast())
-        ]
-        send_group_boardcast_message(push_items)
-    except Exception as e:
-        logger.error('Sending daily push error')
-        logger.error(e)
-
-
-def send_weekly_push():
-    """
-    发送每周推送
-    """
-    try:
-        push_items = [call_async_func(ctfhub_get_upcoming_event())]
-        send_group_boardcast_message(push_items)
-    except Exception as e:
-        logger.error('Sending weekly push error')
-        logger.error(e)
-
-
 def reset_counter():
     counter.reset_counter()
 
-
-every().day.at('18:00').do(send_daily_push)
-every().friday.at('21:00').do(send_weekly_push)
+for s in subscribes:
+    s.set_bot(bot)
+    # TODO: 找到个比 `eval` 更好的方式来进行添加定时任务。
+    exec(f"every().{s.send_frequency}.at('{s.send_time}').do(s.send_message)")
 every().minutes.do(reset_counter)
 run_continuously(60)
 bot.run(host='127.0.0.1', port=8080)
