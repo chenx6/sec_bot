@@ -107,4 +107,5 @@ subscribes: List[Subscription] = [
 
 - [ ] 更详细的文档
 - [ ] 各种功能的完善
+- [ ] Session 的实现
 - [ ] 等着添加
