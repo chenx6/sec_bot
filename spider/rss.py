@@ -1,8 +1,22 @@
 from typing import Any, Callable, List, Sequence, Optional
-from time import strptime, localtime
+from time import mktime, strptime, localtime, struct_time
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
+
+
+def is_curr_day(curr_time: struct_time, pub_time: struct_time) -> bool:
+    """
+    判断时间是否为同一天
+
+    注意，判断的是中国时区的时间。
+    """
+    offset = curr_time.tm_gmtoff - pub_time.tm_gmtoff  # 计算时区偏移
+    pub_time_s = mktime(pub_time)  # 转换时间为当前时区的 Unix 时间戳
+    pub_time = localtime(pub_time_s + offset)  # 加上时区偏移
+    return (
+        curr_time.tm_yday == pub_time.tm_yday and curr_time.tm_year == pub_time.tm_year
+    )
 
 
 async def get_items(session: ClientSession, rss_addr: str) -> List[Any]:
@@ -24,8 +38,7 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
     for item in items:
         if curr_day:
             pub_time = strptime(item.pubDate.text, '%a, %d %b %Y %H:%M:%S %z')
-            if curr_time.tm_yday != pub_time.tm_yday or \
-                curr_time.tm_year != pub_time.tm_year:
+            if not is_curr_day(curr_time, pub_time):
                 continue
         text = f'''标题：{item.title.text.strip()}
 链接：{item.link.text}
