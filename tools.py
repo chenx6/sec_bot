@@ -2,6 +2,7 @@ from threading import Thread, Event
 from typing import Callable, List
 from dataclasses import dataclass
 from time import sleep
+from logging import getLogger, WARNING
 from schedule import run_pending
 from asyncio import new_event_loop, set_event_loop, get_event_loop
 
@@ -9,6 +10,7 @@ from asyncio import new_event_loop, set_event_loop, get_event_loop
 HEADER = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0",
 }
+logger = getLogger('tools')
 
 
 @dataclass
@@ -34,9 +36,12 @@ class Subscription:
         """
         推送消息
         """
-        message = self.get_message_func()
-        for gid in self.subscribe_groups:
-            self.bot.sync.send_group_msg(group_id=gid, message=message)
+        try:
+            message = self.get_message_func()
+            for gid in self.subscribe_groups:
+                self.bot.sync.send_group_msg(group_id=gid, message=message)
+        except Exception as e:
+            logger.error(e)
 
 
 class LimitCounter:

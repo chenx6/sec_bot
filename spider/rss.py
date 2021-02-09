@@ -1,5 +1,6 @@
 from typing import Any, Callable, List, Sequence, Optional
 from time import mktime, strptime, localtime, struct_time
+from email.utils import parsedate
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
@@ -37,7 +38,10 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
     ret_item = []
     for item in items:
         if curr_day:
-            pub_time = strptime(item.pubDate.text, '%a, %d %b %Y %H:%M:%S %z')
+            pub_time = parsedate(item.pubDate.text)
+            if not pub_time:
+                continue
+            pub_time = localtime(mktime(pub_time))
             if not is_curr_day(curr_time, pub_time):
                 continue
         text = f'''标题：{item.title.text.strip()}

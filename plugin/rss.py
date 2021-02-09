@@ -15,7 +15,7 @@ class Rss(BaseBot):
     def match(self, event: Event, message: str) -> bool:
         if not self.has_at_bot(event, message):
             return False
-        return 'RSS' in message
+        return '获取RSS推送' in message
 
     async def reply(self, event: Event) -> str:
         text = await get_360_boardcast(False)
