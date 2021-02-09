@@ -51,6 +51,13 @@ async def reply_at(event: Event):
 def reset_counter():
     counter.reset_counter()
 
+
+@bot.before_sending
+async def can_send_word(event: Event, message, **kwargs):
+    if silent_.is_silent():
+        event.clear()
+
+
 for s in subscribes:
     s.set_bot(bot)
     # TODO: 找到个比 `eval` 更好的方式来进行添加定时任务。
