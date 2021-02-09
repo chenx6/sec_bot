@@ -38,6 +38,8 @@ class Subscription:
         """
         try:
             message = self.get_message_func()
+            if not message or len(message) < 5:
+                return
             for gid in self.subscribe_groups:
                 self.bot.sync.send_group_msg(group_id=gid, message=message)
         except Exception as e:
