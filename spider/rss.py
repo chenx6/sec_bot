@@ -54,7 +54,8 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
 
 async def get_rss_push(rss_addr: str,
                        filter_funcs: Optional[Sequence[Callable[[str], bool]]] = None,
-                       curr_day: bool = True) -> str:
+                       curr_day: bool = True,
+                       limit = 3) -> str:
     """
     获取 RSS 推送
     """
@@ -65,7 +66,10 @@ async def get_rss_push(rss_addr: str,
         if filter_funcs:
             for func in filter_funcs:
                 filtered_item = filter(func, filtered_item)
-        return '\n'.join(filtered_item).strip()
+        ret_item = list(filtered_item)
+        if len(ret_item) > limit:
+            ret_item = ret_item[:limit]
+        return '\n'.join(ret_item).strip()
 
 
 async def get_360_boardcast(curr_day: bool = True) -> str:
