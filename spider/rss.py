@@ -1,23 +1,18 @@
 from typing import Any, Callable, List, Sequence, Optional
-from time import mktime, strptime, localtime, struct_time
-from email.utils import parsedate
+from email.utils import parsedate_to_datetime
+from arrow import get, now
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 
-def is_curr_day(curr_time: struct_time, pub_time: struct_time) -> bool:
+def is_curr_day(pub_time) -> bool:
     """
     判断时间是否为同一天
-
-    注意，判断的是中国时区的时间。
     """
-    offset = curr_time.tm_gmtoff - pub_time.tm_gmtoff  # 计算时区偏移
-    pub_time_s = mktime(pub_time)  # 转换时间为当前时区的 Unix 时间戳
-    pub_time = localtime(pub_time_s + offset)  # 加上时区偏移
-    return (
-        curr_time.tm_yday == pub_time.tm_yday and curr_time.tm_year == pub_time.tm_year
-    )
+    pub_time_a = get(pub_time).to('local')
+    current_time = now()
+    return pub_time_a > current_time.shift(hours=-24) and pub_time_a > current_time
 
 
 async def get_items(session: ClientSession, rss_addr: str) -> List[Any]:
@@ -34,15 +29,13 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
     """
     解析 item 节点，获取可以推送的节点
     """
-    curr_time = localtime()
     ret_item = []
     for item in items:
         if curr_day:
-            pub_time = parsedate(item.pubDate.text)
+            pub_time = parsedate_to_datetime(item.pubDate.text)
             if not pub_time:
                 continue
-            pub_time = localtime(mktime(pub_time))
-            if not is_curr_day(curr_time, pub_time):
+            if not is_curr_day(pub_time):
                 continue
         text = f'''标题：{item.title.text.strip()}
 链接：{item.link.text}
