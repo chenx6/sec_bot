@@ -25,7 +25,7 @@ async def get_items(session: ClientSession, rss_addr: str) -> List[Any]:
     return soup.find_all('item')
 
 
-def get_push_item(items: list, curr_day: bool) -> List[str]:
+def get_push_item(items: list, curr_day: bool, desc_len: int) -> List[str]:
     """
     解析 item 节点，获取可以推送的节点
     """
@@ -39,8 +39,12 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
                 continue
         text = f'''标题：{item.title.text.strip()}
 链接：{item.link.text}
-描述：{item.description.text.strip()}
 '''
+        if desc_len != 0:
+            desc = item.description.text.strip()
+            if len(desc) > desc_len:
+                desc = desc[:desc_len]
+            text += f"描述：{desc}"
         ret_item.append(text)
     return ret_item
 
@@ -48,20 +52,21 @@ def get_push_item(items: list, curr_day: bool) -> List[str]:
 async def get_rss_push(rss_addr: str,
                        filter_funcs: Optional[Sequence[Callable[[str], bool]]] = None,
                        curr_day: bool = True,
-                       limit = 3) -> str:
+                       item_limit: int = 3,
+                       desc_len: int = 20) -> str:
     """
     获取 RSS 推送
     """
     async with ClientSession() as session:
         items = await get_items(session, rss_addr)
-        ret_item = get_push_item(items, curr_day)
+        ret_item = get_push_item(items, curr_day, desc_len)
         filtered_item = iter(ret_item)
         if filter_funcs:
             for func in filter_funcs:
                 filtered_item = filter(func, filtered_item)
         ret_item = list(filtered_item)
-        if len(ret_item) > limit:
-            ret_item = ret_item[:limit]
+        if len(ret_item) > item_limit:
+            ret_item = ret_item[:item_limit]
         return '\n'.join(ret_item).strip()
 
 
