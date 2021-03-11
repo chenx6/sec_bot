@@ -12,7 +12,7 @@ def is_curr_day(pub_time) -> bool:
     """
     pub_time_a = get(pub_time).to('local')
     current_time = now()
-    return pub_time_a > current_time.shift(hours=-24) and pub_time_a > current_time
+    return pub_time_a > current_time.shift(hours=-24) and pub_time_a < current_time
 
 
 async def get_items(session: ClientSession, rss_addr: str) -> List[Any]:
