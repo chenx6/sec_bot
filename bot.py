@@ -53,7 +53,7 @@ def reset_counter():
 
 
 @bot.before_sending
-async def can_send_word(event: Event, message, **kwargs):
+async def can_send_word(event: Event, message, kwargs):
     if silent_.is_silent():
         event.clear()
 
