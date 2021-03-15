@@ -9,26 +9,24 @@ class DailyPush(BaseBot):
     获取腾讯玄武实验室的每日推送
     """
     def __init__(self):
-        super()
         super().__init__()
-        self.curr_day = True
-
-    def reset_bot(self):
-        self.curr_day = True
 
     def match(self, event: Event, message: str) -> bool:
+        if not event.message_id:
+            return False
         if not self.has_at_bot(event, message):
             return False
         if '每日资讯' in message:
+            self.session[event.message_id] = True
             return True
         elif '近期资讯' in message:
-            self.curr_day = False
+            self.session[event.message_id] = False
             return True
         else:
             return False
 
     async def reply(self, event: Event) -> str:
-        article_text = await get_xuanwu_push(self.curr_day)
-        self.reset_bot()
+        article_text = await get_xuanwu_push(self.session[event.message_id])
+        self.reset_bot(event)
         return article_text if len(article_text) != 0 \
                 else '怎么抓取不到Σ( ° △ °|||)︴'

@@ -13,31 +13,30 @@ class CTFHub(BaseBot):
     comp_regex = compile(r'最近的([\d]+)场比赛')
 
     def __init__(self):
-        super()
         super().__init__()
-        self.limit = 5
-
-    def reset_bot(self):
-        self.limit = 5
 
     def match(self, event: Event, message: str) -> bool:
+        if not event.message_id:
+            return False
         if not self.has_at_bot(event, message):
             return False
         if '最近的比赛' in message:
+            self.session[event.message_id] = 5
             return True
         elif self.comp_regex.search(message):
-            limit_s = self.comp_regex.findall(message)[0]
-            self.limit = int(limit_s)
-            if self.limit <= 0:
-                self.limit = 1
-            elif self.limit > 20:
-                self.limit = 20
+            limit = int(self.comp_regex.findall(message)[0])
+            if limit <= 0:
+                limit = 1
+            elif limit > 20:
+                limit = 20
+            self.session[event.message_id] = limit
             return True
         else:
             return False
 
     async def reply(self, event: Event) -> str:
-        competitions = await ctfhub_get_upcoming_event(self.limit)
-        self.reset_bot()
+        competitions = await ctfhub_get_upcoming_event(
+            self.session[event.message_id])
+        self.reset_bot(event)
         return competitions if len(competitions) != 0 \
             else 'CTFHUB 炸了Σ( ° △ °|||)︴'

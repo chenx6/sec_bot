@@ -13,23 +13,21 @@ class AnquankeVuln(BaseBot):
     vuln_regex = compile(r'([Cc][Vv][Ee]-\d+-\d+)')
 
     def __init__(self):
-        super()
         super().__init__()
-        self.cve_number = ''
-
-    def reset_bot(self):
-        self.cve_number = ''
 
     def match(self, event: Event, message: str) -> bool:
+        if not event.message_id:
+            return False
         if not self.has_at_bot(event, message):
             return False
         if self.vuln_regex.search(message):
-            self.cve_number = self.vuln_regex.findall(message)[0]
+            self.session[event.message_id] = self.vuln_regex.findall(
+                message)[0]
             return True
         else:
             return False
 
     async def reply(self, event: Event) -> str:
-        content = await search_anquanke_vuln(self.cve_number)
-        self.reset_bot()
+        content = await search_anquanke_vuln(self.session[event.message_id])
+        self.reset_bot(event)
         return content if len(content) != 0 else '安全客服务器变成炸薯条了？'

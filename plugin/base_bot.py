@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from aiocqhttp import Event, Message
 from aiocqhttp.message import MessageSegment
 from config import admin_uid
@@ -22,13 +23,14 @@ class BaseBot:
         """
         初始化
         """
-        pass
+        self.session: Dict[int, Any] = {}
 
-    def reset_bot(self):
+    def reset_bot(self, event: Event):
         """
         重新设置机器人状态
         """
-        pass
+        if event.message_id:
+            del self.session[event.message_id]
 
     def is_admin(self, event: Event, message: str) -> bool:
         return self.has_at_bot(event, message) \
@@ -38,7 +40,7 @@ class BaseBot:
         """
         查看当前消息是否能处理
         """
-        return False
+        return True if event.message_id else False
 
     async def reply(self, event: Event) -> str:
         """
