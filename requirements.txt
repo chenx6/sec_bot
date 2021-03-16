@@ -5,3 +5,4 @@ schedule>=0.6.0
 lxml
 selenium
 arrow
+requests
