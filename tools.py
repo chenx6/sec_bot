@@ -2,7 +2,7 @@ from threading import Thread, Event
 from typing import Callable, List
 from dataclasses import dataclass
 from time import sleep
-from logging import getLogger, WARNING
+from logging import getLogger
 from schedule import run_pending
 from asyncio import new_event_loop, set_event_loop, get_event_loop
 
@@ -43,6 +43,7 @@ class Subscription:
             for gid in self.subscribe_groups:
                 self.bot.sync.send_group_msg(group_id=gid, message=message)
         except Exception as e:
+            logger.error('Push message error')
             logger.error(e)
 
 
