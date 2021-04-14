@@ -41,11 +41,12 @@ python3 bot.py
 ├── bot.py             # 主程序，机器人获取消息，并交给插件处理的地方
 ├── config.py          # 配置文件，配置管理员，推送信息等参数
 ├── config.template.py # 配置文件模板
+├── datasource.py      # 具体信息来源，为信息获取方法的封装
 ├── LICENSE            # 协议
 ├── plugin             # 插件目录，存放处理不同信息的插件
 ├── README.md          # 你正在读的文件
 ├── requirements.txt   # 让这个程序跑起来的依赖
-├── spider             # 信息的来源
+├── spider             # 信息获取方法
 ├── test               # 单元测试，系统测试
 ├── tools.py           # 辅助函数存放的地方
 └── venv               # 使用 venv 避免污染系统

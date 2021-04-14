@@ -1,6 +1,6 @@
 from aiocqhttp import Event
 
-from spider.rss import get_360_boardcast
+from datasource import get_360_boardcast
 from .base_bot import BaseBot
 
 

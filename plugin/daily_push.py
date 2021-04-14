@@ -1,7 +1,7 @@
 from aiocqhttp import Event
 
 from .base_bot import BaseBot
-from spider.rsshub_weibo import get_xuanwu_push
+from datasource import get_xuanwu_push
 
 
 class DailyPush(BaseBot):
