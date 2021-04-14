@@ -28,6 +28,6 @@ class AnquankeVuln(BaseBot):
             return False
 
     async def reply(self, event: Event) -> str:
-        content = await search_anquanke_vuln(self.session[event.message_id])
+        content = await search_anquanke_vuln(self.session[event.message_id])  # type: ignore
         self.reset_bot(event)
         return content if len(content) != 0 else '安全客服务器变成炸薯条了？'

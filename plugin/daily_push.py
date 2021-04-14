@@ -26,7 +26,7 @@ class DailyPush(BaseBot):
             return False
 
     async def reply(self, event: Event) -> str:
-        article_text = await get_xuanwu_push(self.session[event.message_id])
+        article_text = await get_xuanwu_push(self.session[event.message_id])  # type: ignore
         self.reset_bot(event)
         return article_text if len(article_text) != 0 \
                 else '怎么抓取不到Σ( ° △ °|||)︴'

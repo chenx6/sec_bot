@@ -36,7 +36,7 @@ class CTFHub(BaseBot):
 
     async def reply(self, event: Event) -> str:
         competitions = await ctfhub_get_upcoming_event(
-            self.session[event.message_id])
+            self.session[event.message_id])  # type: ignore
         self.reset_bot(event)
         return competitions if len(competitions) != 0 \
             else 'CTFHUB 炸了Σ( ° △ °|||)︴'

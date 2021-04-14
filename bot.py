@@ -37,6 +37,8 @@ async def reply_at(event: Event):
         await bot.send(event, f'发送的太快了吧，{event.sender["nickname"]}，让我缓缓(＞﹏＜)')
         return
     for plugin in plugins:
+        if not event.message:
+            break
         if plugin.match(event, event.message):
             try:
                 reply_text = await plugin.reply(event)

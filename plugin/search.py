@@ -11,7 +11,7 @@ class SearchBot(BaseBot):
     搜索引擎机器人
     """
 
-    match_regex = compile("帮我搜下([\w ]{1,30})")
+    match_regex = compile(r"帮我搜下([\w ]{1,30})")
 
     def __init__(self):
         super().__init__()
@@ -29,6 +29,6 @@ class SearchBot(BaseBot):
             return False
 
     async def reply(self, event: Event) -> str:
-        search_result = await bing(self.session[event.message_id])
+        search_result = await bing(self.session[event.message_id])  # type: ignore
         self.reset_bot(event)
         return search_result if len(search_result) else '好像什么都没搜到╮(￣▽￣")╭'
