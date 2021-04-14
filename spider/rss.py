@@ -68,14 +68,3 @@ async def get_rss_push(rss_addr: str,
         if len(ret_item) > item_limit:
             ret_item = ret_item[:item_limit]
         return '\n'.join(ret_item).strip()
-
-
-async def get_360_boardcast(curr_day: bool = True) -> str:
-    """
-    获取 360 的通告
-    """
-    def filter_boardcast(text: str) -> bool:
-        return '通告' in text
-
-    filter_funcs = [filter_boardcast]
-    return await get_rss_push('https://cert.360.cn/feed', filter_funcs, curr_day)

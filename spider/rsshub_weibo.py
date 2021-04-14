@@ -62,10 +62,3 @@ async def rsshub_weibo_article(uid: int, condition=None, curr_day=True) -> str:
         article_text = await parse_weibo_article(
             session, article_link) if len(article_link) != 0 else ''
         return article_text.strip()
-
-
-async def get_xuanwu_push(curr_day=True) -> str:
-    """
-    返回玄武实验室每日推送
-    """
-    return await rsshub_weibo_article(5582522936, '每日安全动态推送', curr_day)
