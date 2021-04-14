@@ -66,4 +66,3 @@ for s in subscribes:
     exec(f"every().{s.send_frequency}.at('{s.send_time}').do(s.send_message)")
 every().minutes.do(reset_counter)
 run_continuously(60)
-bot.run(host='127.0.0.1', port=8080)

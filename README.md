@@ -29,7 +29,8 @@ python3 -m venv venv
 source venv/bin/activate
 # 依赖配置
 python3 -m pip install -r requirements.txt
-python3 bot.py
+# 根据需求修改 --bind 的参数
+hypercorn bot:bot.asgi --bind 127.0.0.1:8080
 ```
 
 ## 项目介绍
