@@ -1,9 +1,10 @@
 from typing import List
 
 from aiocqhttp import CQHttp, Event
+from quart import request
 from schedule import every
 
-from config import subscribes
+from config import subscribes, webhook_token
 from tools import run_continuously, LimitCounter
 from plugin import (silent, base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
                     whoami, rss, search, admin, unknown_message)
@@ -48,6 +49,24 @@ async def reply_at(event: Event):
                 logger.error('Plugin error')
                 logger.error(e)
             break
+
+
+@bot.server_app.route('/webhook')
+async def webhook():
+    token = request.args.get('token')
+    group_id = request.args.get('group_id')
+    message = request.args.get('message')
+    if not token or token != webhook_token:
+        return {"message": "token error"}, 400
+    if not group_id or not message:
+        return {"message": "error while missing argument"}, 400
+    group_id = int(group_id)
+    try:
+        response = await bot.send_group_msg(group_id=group_id,
+                                            message=message)  # type: ignore
+        return response
+    except Exception as e:
+        return {"message": "Server error, " + str(e)}, 500
 
 
 def reset_counter():

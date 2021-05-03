@@ -11,6 +11,7 @@ A QQ bot that boardcast information about cyber security
 - 使用搜索引擎搜索
 - 推送 RSS 资源
 - 推送每日安全咨询
+- Webhook
 - 等待添加
 
 ## 需要什么
