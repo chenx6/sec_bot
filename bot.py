@@ -7,7 +7,7 @@ from schedule import every
 from config import subscribes, webhook_token
 from tools import run_continuously, LimitCounter
 from plugin import (silent, base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
-                    whoami, rss, search, admin, unknown_message)
+                    whoami, rss, search, admin, unknown_message, lsp)
 
 silent_ = silent.Silent()
 plugins: List[base_bot.BaseBot] = [
@@ -19,6 +19,7 @@ plugins: List[base_bot.BaseBot] = [
     help_menu.HelpMenu(),
     whoami.WhoAmI(),
     search.SearchBot(),
+    lsp.LSP(),
     admin.Admin(),
     unknown_message.Unknown()
 ]

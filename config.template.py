@@ -1,10 +1,12 @@
 from typing import List
+from pathlib import Path
 
 from datasource import *
 from tools import Subscription
 
 admin_uid: int = 123456789  # 管理员的 UID
 webhook_token: str = 'kirakiradokidoki'
+lsp_imgs = [str(p.absolute()) for p in Path("images").iterdir()]
 
 
 # 通过 `Subscription` 对象实现指定推送的内容和推送时间，推送群组
