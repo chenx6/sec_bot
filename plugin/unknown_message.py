@@ -1,4 +1,5 @@
 from aiocqhttp import Event
+from aiocqhttp.message import Message
 
 from .base_bot import BaseBot
 
@@ -12,7 +13,12 @@ class Unknown(BaseBot):
         pass
 
     def match(self, event: Event, message: str) -> bool:
-        return self.has_at_bot(event, message)
+        # at 了机器人
+        if not self.has_at_bot(event, message):
+            return False
+        # 但是是回复消息
+        return not (True in map(lambda seg: seg['type'] == 'reply',
+                                Message(message)))
 
     async def reply(self, event: Event) -> str:
         return '我听不大懂你在说什么(＞﹏＜)'
