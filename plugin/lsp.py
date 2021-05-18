@@ -13,7 +13,7 @@ class LSP(BaseBot):
         super().__init__()
 
     def match(self, event: Event, message: str) -> bool:
-        return "/lsp" in message[:4]
+        return "/lsp" in message
 
     async def reply(self, event: Event):
         return MessageSegment.image(f"file://{self.imgs[randint(1, len(self.imgs) - 1)]}") \
