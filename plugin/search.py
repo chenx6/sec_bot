@@ -11,7 +11,8 @@ class SearchBot(BaseBot):
     搜索引擎机器人
     """
 
-    match_regex = compile(r"帮我搜下([\w ]{1,30})")
+    # 匹配“帮我搜下”，“帮我搜一下”，“帮我搜搜”
+    match_regex = compile(r"帮我搜([一]{0,1}下|搜|索)([\w ]{1,30})")
 
     def __init__(self):
         super().__init__()
@@ -23,7 +24,7 @@ class SearchBot(BaseBot):
             return False
         matched = self.match_regex.search(message)
         if matched:
-            self.session[event.message_id] = matched.group(1)
+            self.session[event.message_id] = matched.group(2)
             return True
         else:
             return False
