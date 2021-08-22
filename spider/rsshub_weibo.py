@@ -4,7 +4,7 @@ from .rss import get_items
 from re import compile
 from datetime import datetime
 
-RSSHUB_URL = 'https://rsshub.ioiox.com'
+RSSHUB_URL = 'https://rsshub.rssforever.com'
 WEIBO_PATH = '/weibo/user/{}'
 article_link_regex = compile('<a .+href="(.+)"')
 HEADERS = {
