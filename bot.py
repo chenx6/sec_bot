@@ -4,7 +4,7 @@ from aiocqhttp import CQHttp, Event
 from quart import request
 from schedule import every
 
-from config import webhook_token
+from config import webhook_token, subscribes
 from utils.limit_counter import LimitCounter
 from utils.schedule_thread import run_continuously
 from plugin import (silent, base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
@@ -80,5 +80,7 @@ async def can_send_word(event: Event, message, kwargs):
     if silent_.is_silent():
         event.clear()
 
+for sub in subscribes:
+    sub.job.do(sub.send_message, bot=bot)
 every().minutes.do(reset_counter)
 run_continuously(60)
