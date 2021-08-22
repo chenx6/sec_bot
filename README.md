@@ -50,7 +50,7 @@ hypercorn bot:bot.asgi --bind 127.0.0.1:8080
 ├── requirements.txt   # 让这个程序跑起来的依赖
 ├── spider             # 信息获取方法
 ├── test               # 单元测试，系统测试
-├── tools.py           # 辅助函数存放的地方
+├── utils              # 辅助函数存放的地方
 └── venv               # 使用 venv 避免污染系统
 ```
 
@@ -81,7 +81,7 @@ class WhoAmI(BaseBot):
 
 ### 数据来源 (spider 文件夹中的文件) 介绍
 
-机器人回复的内容可能来源是别的网站，所以将信息来源全放在这个文件夹中。在依赖中加入了 `aiohttp` 和 `selenium`，可以作为获取数据的手段。
+机器人回复的内容可能来源是别的网站，所以将信息来源全放在这个文件夹中。在依赖中加入了 `aiohttp` 和 `selenium`, `requests`，可以作为获取数据的手段。
 
 ### 定时任务
 
@@ -93,8 +93,7 @@ class WhoAmI(BaseBot):
 class Subscription:
     get_message_func: Callable[[], str]  # 获取推送内容的函数
     subscribe_groups: List[int]  # 获取订阅此条推送消息的群组
-    send_frequency: str  # 获取发送的频率
-    send_time: str  # 获取发送的时间
+    job: Job  # schedule 任务，用于决定发送时间
 
 ```
 
@@ -102,7 +101,7 @@ class Subscription:
 
 ```python
 subscribes: List[Subscription] = [
-    Subscription(debug_message, [12345678], "day", "20:42"),
+    Subscription(debug_message, [12345678], every().day.at("20:42")),
 ]
 ```
 
@@ -110,5 +109,5 @@ subscribes: List[Subscription] = [
 
 - [ ] 更详细的文档
 - [ ] 各种功能的完善
-- [ ] Session 的实现
+- [x] Session 的实现
 - [ ] 等着添加
