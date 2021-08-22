@@ -1,5 +1,5 @@
 from unittest import TestCase, main
-from tools import call_async_func
+from utils.call_async import call_async_func
 from spider.bing import bing
 
 
