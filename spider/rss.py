@@ -1,70 +1,50 @@
-from typing import Any, Callable, List, Sequence, Optional
-from email.utils import parsedate_to_datetime
-from arrow import get, now
+from typing import Callable, Sequence, Optional
+from itertools import repeat, islice
+from datetime import timedelta
 
-from aiohttp import ClientSession
-from bs4 import BeautifulSoup
+from arrow import now, get as get_time
+from feedparser import parse, FeedParserDict
 
 
-def is_curr_day(pub_time) -> bool:
+def check_time(item: FeedParserDict, elapse: timedelta):
     """
-    判断时间是否为同一天
+    检查时间是否在范围内
     """
-    pub_time_a = get(pub_time).to('local')
-    current_time = now()
-    return pub_time_a > current_time.shift(hours=-24) and pub_time_a < current_time
+    return now() - get_time(item.published_parsed) <= elapse  # type: ignore
 
 
-async def get_items(session: ClientSession, rss_addr: str) -> List[Any]:
+def gene_push_text(item, desc_len: int):
     """
-    解析 RSS ，获取 item 节点
+    生成推送内容
     """
-    response = await session.get(rss_addr)
-    text = await response.text()
-    soup = BeautifulSoup(text, features="lxml-xml")
-    return soup.find_all('item')
-
-
-def get_push_item(items: list, curr_day: bool, desc_len: int) -> List[str]:
-    """
-    解析 item 节点，获取可以推送的节点
-    """
-    ret_item = []
-    for item in items:
-        if curr_day:
-            pub_time = parsedate_to_datetime(item.pubDate.text)
-            if not pub_time:
-                continue
-            if not is_curr_day(pub_time):
-                continue
-        text = f'''标题：{item.title.text.strip()}
-链接：{item.link.text}
-'''
-        if desc_len != 0:
-            desc = item.description.text.strip()
-            if len(desc) > desc_len:
-                desc = desc[:desc_len]
-            text += f"描述：{desc}"
-        ret_item.append(text)
-    return ret_item
+    text = f"标题：{item.title}\n链接：{item.link}"
+    if desc_len != 0:
+        text += f"\n描述：{item.summary[:desc_len]}"
+    return text
 
 
 async def get_rss_push(rss_addr: str,
-                       filter_funcs: Optional[Sequence[Callable[[str], bool]]] = None,
-                       curr_day: bool = True,
+                       filter_funcs: Optional[Sequence[Callable[
+                           [FeedParserDict], bool]]] = None,
+                       elapse_time: timedelta = timedelta(days=1),
                        item_limit: int = 3,
                        desc_len: int = 20) -> str:
     """
     获取 RSS 推送
+
+    :param rss_addr: RSS 地址
+    :param filter_funcs: 过滤函数
+    :param elapse_time: 限制消息发布时间
+    :param item_limit: 限制推送消息数量
+    :param desc_len: 推送的描述长度
     """
-    async with ClientSession() as session:
-        items = await get_items(session, rss_addr)
-        ret_item = get_push_item(items, curr_day, desc_len)
-        filtered_item = iter(ret_item)
-        if filter_funcs:
-            for func in filter_funcs:
-                filtered_item = filter(func, filtered_item)
-        ret_item = list(filtered_item)
-        if len(ret_item) > item_limit:
-            ret_item = ret_item[:item_limit]
-        return '\n'.join(ret_item).strip()
+    items = parse(rss_addr)
+    result_items = iter(items.entries)
+    result_items = filter(lambda x: check_time(x, elapse_time), result_items)
+    if filter_funcs != None:
+        for func in filter_funcs:
+            result_items = filter(func, result_items)
+    if item_limit != 0:
+        result_items = islice(result_items, item_limit)
+    result_items = map(gene_push_text, result_items, repeat(desc_len))
+    return "\n".join(result_items)

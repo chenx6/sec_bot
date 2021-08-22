@@ -9,7 +9,7 @@ from utils.call_async import call_async_func
 class RsshubWeiboSpiderTest(TestCase):
     def test1(self):
         loop = get_event_loop()
-        task = loop.create_task(get_xuanwu_push())
+        task = loop.create_task(get_xuanwu_push(False))
         loop.run_until_complete(task)
         result = task.result()
         print(result)

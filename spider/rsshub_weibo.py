@@ -1,12 +1,14 @@
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
-from .rss import get_items
 from re import compile
-from datetime import datetime
+from datetime import timedelta
+
+from feedparser import parse
+from arrow import now, get as get_time
 
 RSSHUB_URL = 'https://rsshub.rssforever.com'
 WEIBO_PATH = '/weibo/user/{}'
-article_link_regex = compile('<a .+href="(.+)"')
+article_link_regex = compile('<a .*href="(.+)"')
 HEADERS = {
     'User-Agent':
     'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0',
@@ -22,22 +24,21 @@ HEADERS = {
 }
 
 
-async def parse_weibo_rss(session: ClientSession,
-                          uid: int,
+async def parse_weibo_rss(uid: int,
                           condition=None,
                           curr_day=True) -> str:
     """
     提取微博内容
     """
-    items = await get_items(session, RSSHUB_URL + WEIBO_PATH.format(uid))
+    items = parse(RSSHUB_URL + WEIBO_PATH.format(uid))
     link = ''
-    for item in items:
+    for item in items.entries:
         # 获取日期最近的推送
-        if condition not in item.text:
+        if condition not in item.title:
             continue
-        if curr_day and datetime.now().strftime('%m-%d') not in item.text:
+        if curr_day and now() - get_time(item.published_parsed) <= timedelta(days=1):
             continue
-        link = article_link_regex.findall(item.text)[0]
+        link = article_link_regex.findall(item.summary)[0]
         break
     return link
 
@@ -58,7 +59,7 @@ async def rsshub_weibo_article(uid: int, condition=None, curr_day=True) -> str:
     通过 rsshub 和 weibo 来获取文章
     """
     async with ClientSession(headers=HEADERS) as session:
-        article_link = await parse_weibo_rss(session, uid, condition, curr_day)
+        article_link = await parse_weibo_rss(uid, condition, curr_day)
         article_text = await parse_weibo_article(
             session, article_link) if len(article_link) != 0 else ''
         return article_text.strip()
