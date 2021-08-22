@@ -1,6 +1,6 @@
 from requests import get
 
-from tools import call_async_func
+from utils.call_async import call_async_func
 from spider.rsshub_weibo import rsshub_weibo_article
 from spider.rss import get_rss_push
 from spider.ctfhub import ctfhub_get_upcoming_event
