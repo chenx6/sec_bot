@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from requests import get
+from feedparser import FeedParserDict
 
 from utils.call_async import call_async_func
 from spider.rsshub_weibo import rsshub_weibo_article
@@ -20,16 +23,16 @@ def get_xuanwu_push_sync() -> str:
     return call_async_func(get_xuanwu_push())
 
 
-async def get_360_boardcast(curr_day: bool = True) -> str:
+async def get_360_boardcast(elapse: timedelta = timedelta(days=1)) -> str:
     """
     获取 360 的通告
     """
-    def filter_boardcast(text: str) -> bool:
-        return '通告' in text
+    def filter_boardcast(item: FeedParserDict) -> bool:
+        return '通告' in item.title
 
     filter_funcs = [filter_boardcast]
     return await get_rss_push('https://cert.360.cn/feed', filter_funcs,
-                              curr_day, desc_len=100)
+                              elapse, desc_len=100)
 
 
 def get_360_boardcast_sync() -> str:
@@ -37,8 +40,8 @@ def get_360_boardcast_sync() -> str:
 
 
 def get_seclist_fulldisclose() -> str:
-    def filter_malvuln(text: str) -> bool:
-        return 'malvuln' not in text
+    def filter_malvuln(item: FeedParserDict) -> bool:
+        return 'malvuln' not in item.title
 
     lst = [filter_malvuln]
     return call_async_func(

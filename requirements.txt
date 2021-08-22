@@ -7,3 +7,4 @@ lxml
 selenium
 arrow
 requests
+feedparser
