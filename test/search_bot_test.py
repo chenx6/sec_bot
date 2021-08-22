@@ -3,7 +3,7 @@ from unittest import TestCase, main
 from aiocqhttp import Event
 
 from plugin.search import SearchBot
-from tools import call_async_func
+from utils.call_async import call_async_func
 
 
 class SearchBotTest(TestCase):
@@ -27,7 +27,7 @@ class SearchBotTest(TestCase):
         self.assertTrue(bot.match(event, event.message))
         result = call_async_func(bot.reply(event))
         print(result)
-        self.assertTrue(len(result) > 20)
+        self.assertTrue(len(result) > 10)
 
 
 if __name__ == "__main__":

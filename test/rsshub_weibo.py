@@ -1,8 +1,9 @@
 from unittest import TestCase, main
 from asyncio import get_event_loop
 
-from spider.rsshub_weibo import get_xuanwu_push, rsshub_weibo_article
-from tools import call_async_func
+from spider.rsshub_weibo import rsshub_weibo_article
+from datasource import get_xuanwu_push
+from utils.call_async import call_async_func
 
 
 class RsshubWeiboSpiderTest(TestCase):

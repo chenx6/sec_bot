@@ -40,14 +40,14 @@ async def bing(keyword: str, result_count=3) -> str:
         soup = BeautifulSoup(text, "html.parser")
         results = soup.find_all("li", class_="b_algo")
         ret_results = []
-        for idx, node in enumerate(results):
-            if idx == result_count:
+        for node in results:
+            if len(ret_results) == result_count:
                 break
-            headlines = node.select("li > h2")
-            intros = node.select("li > div > p") or node.select('.b_snippet > p')
+            headlines = node.select("div > h2 > a")
+            intros = node.select("div[class='b_richcard']") or node.select('p')
             if len(headlines) and len(intros):
                 headline = headlines[0].text
-                link = headlines[0].a["href"]
+                link = headlines[0]["href"]
                 intro = intros[0].text
                 ret_results.append(f"{headline}\n{intro}\n{link}")
         return "\n\n".join(ret_results)

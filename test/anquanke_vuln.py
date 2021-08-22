@@ -1,7 +1,7 @@
 from unittest import TestCase, main
 
 from spider.anquanke_vuln import search_anquanke_vuln
-from tools import call_async_func
+from utils.call_async import call_async_func
 
 
 class AnquankeVuln(TestCase):
