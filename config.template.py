@@ -20,5 +20,6 @@ subscribes: List[Subscription] = [
     # Subscription(get_360_boardcast_sync, [12345678], every().day.at("18:00")),
     # Subscription(get_seclist_fulldisclose, [12345678], every().day.at("18:00")),
     # Subscription(get_ctf_event, [12345678], every().friday.at("20:00")),
+    # Subscription(good_night, [12345678], every().day.at("22:00")),
     Subscription(debug_message, [12345678], every().day.at("20:42")),
 ]

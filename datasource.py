@@ -7,6 +7,7 @@ from utils.call_async import call_async_func
 from spider.rsshub_weibo import rsshub_weibo_article
 from spider.rss import get_rss_push
 from spider.ctfhub import ctfhub_get_upcoming_event
+from spider.wttrin import wttrin
 
 
 async def get_xuanwu_push(curr_day=True) -> str:
@@ -61,6 +62,10 @@ def get_ctf_event() -> str:
 
 def good_morning() -> str:
     return get('https://wttr.in/Huangdao?format="%l+%c+%t(%f)"').text
+
+
+def good_night() -> str:
+    return call_async_func(wttrin("青岛", 1))
 
 
 def debug_message() -> str:
