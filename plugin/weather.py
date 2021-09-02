@@ -1,13 +1,14 @@
 from re import compile
 
-from aiocqhttp import Event
+from aiocqhttp import Event, Message
 
 from spider.wttrin import wttrin
 from .base_bot import BaseBot
 
 
 class Weather(BaseBot):
-    resp_regex = compile("(.*)([今|明])天天气(如何|怎样)*")
+    # " *" 吃掉空格，"(.*)"匹配地区
+    resp_regex = compile(" *(.*)([今|明])天天气(如何|怎样)*")
     to_day = {"今": 0, "明": 1}
 
     def __init__(self):
@@ -18,7 +19,13 @@ class Weather(BaseBot):
             return False
         if not self.has_at_bot(event, message):
             return False
-        matched = self.resp_regex.search(message)
+        # 通过 Message 解析消息，提取出命令文字
+        msgs = Message(message)
+        msg_lst = list(filter(lambda x: x["type"] == "text", msgs))
+        if not msg_lst:
+            return False
+        text_msg = msg_lst[0]["data"]["text"]
+        matched = self.resp_regex.search(text_msg)
         if matched == None:
             return False
         self.session[event.message_id] = matched.groups()
