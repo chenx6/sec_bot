@@ -8,7 +8,7 @@ from config import webhook_token, subscribes
 from utils.limit_counter import LimitCounter
 from utils.schedule_thread import run_continuously
 from plugin import (silent, base_bot, anquanke_vuln, ctfhub, daily_push, help_menu,
-                    whoami, rss, search, admin, unknown_message, lsp, weather)
+                    whoami, rss, search, admin, unknown_message, lsp, weather, debian_pkg)
 
 silent_ = silent.Silent()
 plugins: List[base_bot.BaseBot] = [
@@ -21,6 +21,7 @@ plugins: List[base_bot.BaseBot] = [
     whoami.WhoAmI(),
     search.SearchBot(),
     weather.Weather(),
+    debian_pkg.DebianPkgBot(),
     lsp.LSP(),
     admin.Admin(),
     unknown_message.Unknown()
