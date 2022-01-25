@@ -1,4 +1,5 @@
 from typing import List
+from traceback import format_exc
 
 from aiocqhttp import CQHttp, Event
 from quart import request
@@ -49,9 +50,9 @@ async def reply_at(event: Event):
                 reply_text = await plugin.reply(event)
                 await bot.send(event, reply_text)
                 counter.add_counter()
-            except Exception as e:
+            except Exception:
                 logger.error('Plugin error')
-                logger.error(e)
+                logger.error(format_exc())
             break
 
 
